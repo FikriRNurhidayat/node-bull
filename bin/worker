@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+const worker = require('../src/worker');
+
+worker.run(() => {
+  console.clear();
+  console.log('Worker run!')
+});
