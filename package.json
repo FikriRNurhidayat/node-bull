@@ -14,11 +14,14 @@
   "scripts": {
     "start": "node -r 'dotenv/config' bin/server",
     "start:worker": "node -r 'dotenv/config' bin/worker",
-    "develop": "nodemon -q --exec 'node -r 'dotenv/config' bin/server'",
+    "develop:worker": "nodemon -q --exec \"node -r 'dotenv/config' bin/worker\"",
+    "develop:server": "nodemon -q --exec \"node -r 'dotenv/config' bin/server\"",
+    "develop": "concurrently 'npm:develop:server' 'npm:develop:worker'",
     "prettier": "prettier --write ."
   },
   "devDependencies": {
     "nodemon": "^2.0.12",
+    "concurrently": "^6.2.1",
     "prettier": "^2.3.2",
     "sequelize-cli": "^6.2.0"
   }

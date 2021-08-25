@@ -1,4 +1,5 @@
 const { Order } = require("../models");
+const { ORDER_EXPIRATION_TIME } = require("../config/constant");
 const { checkExpirationLater } = require("../producers/orderProducer");
 
 async function getOrder(orderId) {
@@ -24,7 +25,7 @@ exports.checkoutOrder = async function (orderId) {
   const order = await getOrder(orderId);
 
   await order.update({ status: "CHECKED_OUT" });
-  await checkExpirationLater(order.id, 3000);
+  await checkExpirationLater(order.id, ORDER_EXPIRATION_TIME);
 
   return order;
 };

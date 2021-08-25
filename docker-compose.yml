@@ -1,0 +1,60 @@
+version: "3"
+services:
+  migrate:
+    container_name: migrate
+    image: fikrirnurhidayat/node-bull
+    command: yarn sequelize db:migrate
+    environment:
+      - REDIS_HOST=redis://redis:6379
+      - DATABASE_NAME=server
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_HOST=postgres
+      - NODE_ENV=staging
+    depends_on:
+      - postgres
+  server:
+    build: .
+    container_name: server
+    image: fikrirnurhidayat/node-bull
+    command: server
+    environment:
+      - REDIS_HOST=redis://redis:6379
+      - DATABASE_NAME=server
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_HOST=postgres
+      - NODE_ENV=staging
+    ports:
+      - 8000:8000
+    depends_on:
+      - migrate
+      - redis
+  worker:
+    container_name: worker
+    image: fikrirnurhidayat/node-bull
+    command: worker
+    environment:
+      - REDIS_HOST=redis://redis:6379
+      - DATABASE_NAME=server
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_HOST=postgres
+      - NODE_ENV=staging
+    depends_on:
+      - server
+      - redis
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=server
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - 6379:6379
